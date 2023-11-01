@@ -10,7 +10,7 @@ public class BulletpOOL : MonoBehaviour
     public List<List<GameObject>> pooledObjectsLists; // lista tipos de bala
     public List<GameObject> bulletPrefabs; // Lista de prefabs
     public int amountToPool;
-    public List<int> amountsToPool; // amounts para cada uno
+    public List<int> amountsToPool; // numero de los elementos
 
     void Awake()
     {
@@ -27,7 +27,7 @@ public class BulletpOOL : MonoBehaviour
     {
         if (bulletPrefabs.Count != amountsToPool.Count)
         {
-            Debug.LogError("el amount debe ser igual");
+            Debug.LogError("el n° amount debe ser igual a la cantidad de elemntos");
             return;
         }
         foreach (GameObject prefab in bulletPrefabs)
@@ -55,7 +55,7 @@ public class BulletpOOL : MonoBehaviour
             }
         }
 
-        // Si no se encontró un proyectil disponible en el pool, crea uno nuevo y agrégalo al pool.
+        // si me quedo sin
         GameObject newBullet = Instantiate(bulletPrefabs[bulletType - 1]);
         newBullet.SetActive(false);
         selectedList.Add(newBullet);
