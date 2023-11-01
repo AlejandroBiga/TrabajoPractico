@@ -35,6 +35,9 @@ public class TurretAI : MonoBehaviour {
 
     private Transform lockOnPos;
 
+    
+
+
     //public TurretShoot_Base shotScript;
 
     void Start () {
@@ -50,39 +53,50 @@ public class TurretAI : MonoBehaviour {
     }
 	
 	void Update () {
-        if (currentTarget != null)
-        {
-            FollowTarget();
 
-            float currentTargetDist = Vector3.Distance(transform.position, currentTarget.transform.position);
-            if (currentTargetDist > attackDist)
+        if (currentTarget != null )
             {
-                currentTarget = null;
-            }
-        }
-        else
-        {
-            IdleRitate();
-        }
+                FollowTarget();
 
-        timer += Time.deltaTime;
-        if (timer >= shootCoolDown)
-        {
-            if (currentTarget != null)
-            {
-                timer = 0;
-                
-                if (animator != null)
+                float currentTargetDist = Vector3.Distance(transform.position, currentTarget.transform.position);
+                if (currentTargetDist > attackDist)
                 {
-                    animator.SetTrigger("Fire");
-                    ShootTrigger();
-                }
-                else
-                {
-                    ShootTrigger();
+                    currentTarget = null;
                 }
             }
-        }
+            else
+            {
+                IdleRitate();
+            }
+
+            timer += Time.deltaTime;
+            if (timer >= shootCoolDown)
+            {
+                if (currentTarget != null)
+                {
+                if (Input.GetMouseButtonDown(0)) 
+                {
+                    float currentTargetDist = Vector3.Distance(transform.position, currentTarget.transform.position);
+                    if (currentTargetDist <= attackDist)
+                    {
+                        timer = 0;
+
+                        if (animator != null)
+                        {
+                            animator.SetTrigger("Fire");
+                            ShootTrigger();
+                        }
+                        else
+                        {
+                            ShootTrigger();
+                        }
+                    }
+                }
+            }
+            }
+        
+
+           
 	}
 
     private void ChackForTarget()
@@ -102,6 +116,7 @@ public class TurretAI : MonoBehaviour {
                 }
             }
         }
+        
     }
 
     private void FollowTarget() //todo : smooth rotate
@@ -175,43 +190,71 @@ public class TurretAI : MonoBehaviour {
 
     public void Shoot(GameObject go)
     {
-        if (turretType == TurretType.Catapult)
+        // disposicion:
+        // 1 (bomba)
+        // 2 (misil rapido)
+        // 3  (misil guia)
+        
+            if (turretType == TurretType.Catapult)
         {
             lockOnPos = go.transform;
-            //Aplicar POOL OBJECT
-            Instantiate(muzzleEff, muzzleMain.transform.position, muzzleMain.rotation);
-            GameObject missleGo = Instantiate(bullet, muzzleMain.transform.position, muzzleMain.rotation);
-            Projectile projectile = missleGo.GetComponent<Projectile>();
-            projectile.target = lockOnPos;
+            GameObject missleGo = BulletpOOL.SharedInstance.GetPooledObject(1); 
+            if (missleGo != null)
+            {
+                missleGo.transform.position = muzzleMain.transform.position;
+                missleGo.transform.rotation = muzzleMain.rotation;
+                missleGo.SetActive(true);
+
+                Projectile projectile = missleGo.GetComponent<Projectile>();
+                projectile.target = lockOnPos;
+            }
         }
-        else if(turretType == TurretType.Dual)
+        else if (turretType == TurretType.Dual)
         {
             if (shootLeft)
             {
-                //Aplicar POOL OBJECT
-                Instantiate(muzzleEff, muzzleMain.transform.position, muzzleMain.rotation);
-                GameObject missleGo = Instantiate(bullet, muzzleMain.transform.position, muzzleMain.rotation);
-                Projectile projectile = missleGo.GetComponent<Projectile>();
-                projectile.target = transform.GetComponent<TurretAI>().currentTarget.transform;
+                GameObject missleGo = BulletpOOL.SharedInstance.GetPooledObject(3); 
+                if (missleGo != null)
+                {
+                    missleGo.transform.position = muzzleMain.transform.position;
+                    missleGo.transform.rotation = muzzleMain.rotation;
+                    missleGo.SetActive(true);
+
+                    Projectile projectile = missleGo.GetComponent<Projectile>();
+                    projectile.target = transform.GetComponent<TurretAI>().currentTarget.transform;
+                }
             }
             else
             {
-                //Aplicar POOL OBJECT
-                Instantiate(muzzleEff, muzzleSub.transform.position, muzzleSub.rotation);
-                GameObject missleGo = Instantiate(bullet, muzzleSub.transform.position, muzzleSub.rotation);
-                Projectile projectile = missleGo.GetComponent<Projectile>();
-                projectile.target = transform.GetComponent<TurretAI>().currentTarget.transform;
+                GameObject missleGo = BulletpOOL.SharedInstance.GetPooledObject(3); 
+                if (missleGo != null)
+                {
+                    missleGo.transform.position = muzzleSub.transform.position;
+                    missleGo.transform.rotation = muzzleSub.rotation;
+                    missleGo.SetActive(true);
+
+                    Projectile projectile = missleGo.GetComponent<Projectile>();
+                    projectile.target = transform.GetComponent<TurretAI>().currentTarget.transform;
+                }
             }
 
             shootLeft = !shootLeft;
         }
         else
         {
-            //Aplicar POOL OBJECT
-            Instantiate(muzzleEff, muzzleMain.transform.position, muzzleMain.rotation);
-            GameObject missleGo = Instantiate(bullet, muzzleMain.transform.position, muzzleMain.rotation);
-            Projectile projectile = missleGo.GetComponent<Projectile>();
-            projectile.target = currentTarget.transform;
+            GameObject missleGo = BulletpOOL.SharedInstance.GetPooledObject(2); 
+            if (missleGo != null)
+            {
+                missleGo.transform.position = muzzleMain.transform.position;
+                missleGo.transform.rotation = muzzleMain.rotation;
+                missleGo.SetActive(true);
+
+                Projectile projectile = missleGo.GetComponent<Projectile>();
+                projectile.target = currentTarget.transform;
+            }
         }
     }
+
+
 }
+
