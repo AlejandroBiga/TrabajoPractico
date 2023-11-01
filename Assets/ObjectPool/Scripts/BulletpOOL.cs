@@ -45,7 +45,7 @@ public class BulletpOOL : MonoBehaviour
 
     public GameObject GetPooledObject(int bulletType)
     {
-        List<GameObject> selectedList = pooledObjectsLists[bulletType - 1]; 
+        List<GameObject> selectedList = pooledObjectsLists[bulletType - 1];
 
         for (int i = 0; i < selectedList.Count; i++)
         {
@@ -55,6 +55,10 @@ public class BulletpOOL : MonoBehaviour
             }
         }
 
-        return null;
+        // Si no se encontró un proyectil disponible en el pool, crea uno nuevo y agrégalo al pool.
+        GameObject newBullet = Instantiate(bulletPrefabs[bulletType - 1]);
+        newBullet.SetActive(false);
+        selectedList.Add(newBullet);
+        return newBullet;
     }
 }
