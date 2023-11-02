@@ -8,23 +8,33 @@ public class ButtonController : MonoBehaviour
     public rockF Rock;
     public treeF Tree;
     public bushF Bush;
-    public Transform spawner; // Objeto vacío que actúa como spawner en la escena.
+    public Transform spawner;
+    private GameObject OBinstance = null;
 
     public void SpawnRock()
     {
-        GameObject newRock = Rock.CreateObject(spawner.position);
-        // Aquí puedes configurar propiedades adicionales si es necesario.
+        InstanceOB(Rock.CreateObject(spawner.position));
+        
     }
 
     public void SpawnTree()
     {
-        GameObject newTree = Tree.CreateObject(spawner.position);
-        // Configura propiedades adicionales si es necesario.
+        InstanceOB(Tree.CreateObject(spawner.position));
+        
     }
 
     public void SpawnBush()
     {
-        GameObject newBush = Bush.CreateObject(spawner.position);
-        // Configura propiedades adicionales si es necesario.
+        InstanceOB(Bush.CreateObject(spawner.position));
+        
+    }
+
+    private void InstanceOB(GameObject newOB)
+    {
+        if (OBinstance != null)
+        {
+            Destroy(OBinstance);
+        }
+        OBinstance = newOB;
     }
 }
